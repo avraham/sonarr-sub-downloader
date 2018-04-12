@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 echo `dirname $0`
+export PATH="$PATH:/usr/local/bin"
+
 declare LOG_FILE=`dirname $0`/sub-downloader.log
 declare WANTED_FILE=`dirname $0`/wanted/subs.wanted
 
@@ -38,6 +40,7 @@ while [ "$1" != "" ]; do
   shift
 done
 
+
 doLog "###### Process started at: $(date) ######"
 
 declare EPISODE_PATH=${sonarr_episodefile_path}
@@ -47,19 +50,34 @@ if [[ -z $EPISODE_PATH ]]; then
   exit 1
 fi
 
+file_folder="$(dirname "${EPISODE_PATH}")"
+hardlink_to_plex_folder="/Users/Avr/Downloads/sonarr-sub-downloader-0.4"
+
+if [ -e "${file_folder}/.skip_subs" ]; then
+  doLog "skipping subs for ${EPISODE_PATH}"
+  ${hardlink_to_plex_folder}/hardlink_to_plex.sh "${EPISODE_PATH}"
+  exit 1
+fi
+
+doLog "PATH : ${PATH}"
 doLog "Looking for subtitles for: ${EPISODE_PATH}"
 
 doLog "Executing subliminal"
-doLog "subliminal download ${LANGUAGES} ${EPISODE_PATH}"
-subliminal download ${LANGUAGES} "${EPISODE_PATH}" >> $LOG_FILE 2>&1
-  
+doLog "subliminal download ${LANGUAGES} -p subdivx -s ${EPISODE_PATH}"
+subliminal download ${LANGUAGES} -p subdivx -s "${EPISODE_PATH}" >> $LOG_FILE 2>&1
+
 # Look for not found subtitles
 declare LANG_ARRAY=($(echo ${LANGUAGES} | sed "s/-l //g"))
 
 for LANG in "${LANG_ARRAY[@]}"; do
-  SUB_FILE=$(echo $EPISODE_PATH | sed "s/...$/${LANG}\.srt/g")
+  SUB_FILE=$(echo $EPISODE_PATH | sed "s/...$/srt/g")
   if [[ ! -f $SUB_FILE ]]; then
     doLog "Subtitle ${SUB_FILE} not found, adding it to wanted"
     echo $EPISODE_PATH:$SUB_FILE >> ${WANTED_FILE}
+  else
+    doLog "Subtitle ${SUB_FILE} found!!!"
+    doLog "Calling ./hardlink_to_plex.sh"
+    #call custom script to hardlink file and sub to plex folder
+    ${hardlink_to_plex_folder}/hardlink_to_plex.sh "${EPISODE_PATH}"
   fi
 done
