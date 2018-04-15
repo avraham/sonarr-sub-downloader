@@ -2,7 +2,10 @@
 echo "The script you are running has basename `basename "$0"`, dirname `dirname "$0"`"
 echo "The present working directory is `pwd`"
 
-declare MLOG_FILE=`dirname $0`/hardlink_to_plex.log
+nas_folder="/Users/Avr/nas"
+plex_folder="/Users/Avr/plex"
+
+declare MLOG_FILE=`dirname $0`/hardlink_to_plex_or_nas.log
 
 # Sonarr does not show the stdout as part of the log information displayed by the system,
 # So I decided to store the log information by my own.
@@ -13,21 +16,33 @@ function doMLog {
 
 doMLog "###### Process started at: $(date) ######"
 
-sonarr_completed_dir="/Users/Avr/Downloads/series"
-plex_folder="/Users/Avr/plex"
+
+
+
+
+media_dir="$(dirname "$1")"
 
 # sonarr_completed_dir="/mnt/data/dietpi_userdata/downloads"
 # plex_folder="/mnt/data/dietpi_userdata/plex"
 current_dir=$(pwd)
 doMLog "current_dir: ${current_dir}"
 
-movies_dir="${plex_folder}/movies"
-series_dir="${plex_folder}/tvshows"
+#check if we need to hardlink to plex folder or nas folder
+if [[ $media_dir = *Avr* ]]; then
+  doMLog "we need to hardlink to plex folder"
+  movies_dir="${plex_folder}/movies"
+  series_dir="${plex_folder}/tvshows"
+else
+  doMLog "we need to hardlink to nas folder"
+  movies_dir="${nas_folder}/movies"
+  series_dir="${nas_folder}/tvshows"
+fi
+
 
 doMLog "movies_dir: ${movies_dir}"
 doMLog "series_dir: ${series_dir}"
 
-media_dir="$(dirname "$1")"
+
 media_dir_name="$(basename "$media_dir")"
 media_dir_name_no_bs="$(basename "$media_dir" | sed -e 's/\\//g' )"
 parentdir="$(dirname "$media_dir")"
@@ -37,7 +52,7 @@ doMLog "media_dir_name_no_bs: ${media_dir_name_no_bs}"
 doMLog "media_dir_name: ${media_dir_name}"
 doMLog "parentdir: ${parentdir}"
 
-if [ "$parentdir" == "${sonarr_completed_dir}/movies" ]; then
+if [ "$media_dir_name" == "movies" ]; then
   # it's a movie
 
   #create movie folder

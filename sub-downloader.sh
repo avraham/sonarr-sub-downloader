@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 echo `dirname $0`
+hardlink_to_plex_or_nas_folder="/Users/Avr/Downloads/sonarr-sub-downloader-0.4"
 export PATH="$PATH:/usr/local/bin"
 
 declare LOG_FILE=`dirname $0`/sub-downloader.log
@@ -47,15 +48,21 @@ declare EPISODE_PATH=${sonarr_episodefile_path}
 
 if [[ -z $EPISODE_PATH ]]; then
   doLog "sonarr_episodefile_path environment variable not found"
-  exit 1
+
+  declare EPISODE_PATH=${radarr_moviefile_path}
+
+  if [[ -z $EPISODE_PATH ]]; then
+    doLog "radarr_episodefile_path environment variable not found"
+    exit 1
+  fi
 fi
 
 file_folder="$(dirname "${EPISODE_PATH}")"
-hardlink_to_plex_folder="/Users/Avr/Downloads/sonarr-sub-downloader-0.4"
+
 
 if [ -e "${file_folder}/.skip_subs" ]; then
   doLog "skipping subs for ${EPISODE_PATH}"
-  ${hardlink_to_plex_folder}/hardlink_to_plex.sh "${EPISODE_PATH}"
+  ${hardlink_to_plex_or_nas_folder}/hardlink_to_plex_or_nas.sh "${EPISODE_PATH}"
   exit 1
 fi
 
@@ -76,8 +83,8 @@ for LANG in "${LANG_ARRAY[@]}"; do
     echo $EPISODE_PATH:$SUB_FILE >> ${WANTED_FILE}
   else
     doLog "Subtitle ${SUB_FILE} found!!!"
-    doLog "Calling ./hardlink_to_plex.sh"
+    doLog "hardlink_to_plex_or_nas.sh for ${EPISODE_PATH} from sub-downloader"
     #call custom script to hardlink file and sub to plex folder
-    ${hardlink_to_plex_folder}/hardlink_to_plex.sh "${EPISODE_PATH}"
+    ${hardlink_to_plex_or_nas_folder}/hardlink_to_plex_or_nas.sh "${EPISODE_PATH}"
   fi
 done
