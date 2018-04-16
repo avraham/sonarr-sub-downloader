@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 echo `dirname $0`
-hardlink_to_plex_or_nas_folder="/Users/Avr/Downloads/sonarr-sub-downloader-0.4"
+hardlink_to_plex_or_nas_folder="/mnt/data/dietpi_userdata/scripts/sub-downloader"
 export PATH="$PATH:/usr/local/bin"
 
 declare LOG_FILE=`dirname $0`/sub-downloader.log

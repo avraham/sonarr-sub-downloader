@@ -1,6 +1,6 @@
 #!/bin/bash
 
-hardlink_to_plex_or_nas_folder="/Users/Avr/Downloads/sonarr-sub-downloader-0.4"
+hardlink_to_plex_or_nas_folder="/mnt/data/dietpi_userdata/scripts/sub-downloader"
 declare WANTED_FILE=`dirname $0`/subs.wanted
 
 

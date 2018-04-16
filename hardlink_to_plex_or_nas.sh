@@ -2,8 +2,8 @@
 echo "The script you are running has basename `basename "$0"`, dirname `dirname "$0"`"
 echo "The present working directory is `pwd`"
 
-nas_folder="/Users/Avr/nas"
-plex_folder="/Users/Avr/plex"
+nas_folder="/mnt/data/dietpi_userdata/nas"
+plex_folder="/mnt/data/dietpi_userdata/plex"
 
 declare MLOG_FILE=`dirname $0`/hardlink_to_plex_or_nas.log
 
@@ -28,7 +28,7 @@ current_dir=$(pwd)
 doMLog "current_dir: ${current_dir}"
 
 #check if we need to hardlink to plex folder or nas folder
-if [[ $media_dir = *Avr* ]]; then
+if [[ $media_dir = *to_plex* ]]; then
   doMLog "we need to hardlink to plex folder"
   movies_dir="${plex_folder}/movies"
   series_dir="${plex_folder}/tvshows"
