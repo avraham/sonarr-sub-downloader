@@ -13,6 +13,7 @@ while read -r line; do
   MAP_ARRAY=($(echo "$line"))
   SOURCE=${MAP_ARRAY[0]}
   SRT=${MAP_ARRAY[1]}
+  TRIES=${MAP_ARRAY[2]}
   LANG=`es-MX`
   # LANG=`echo $SRT | sed -e "s/\.srt//g" -e "s/.*\(..\)/\1/"`
 
@@ -28,7 +29,8 @@ while read -r line; do
     subliminal download -l $LANG $SOURCE
     if [[ ! -f $SRT ]]; then
       IFS=''
-      MISSED="$SOURCE:$SRT\n$MISSED"
+      nTRIES="$((TRIES + 1))"
+      MISSED="$SOURCE:$SRT:$nTRIES\n$MISSED"
       echo "Subtitle still not available"
     else
       echo "Great! we have found $SRT"

@@ -71,7 +71,7 @@ doLog "Looking for subtitles for: ${EPISODE_PATH}"
 
 doLog "Executing subliminal"
 doLog "subliminal download ${LANGUAGES} -p subdivx -s ${EPISODE_PATH}"
-subliminal download ${LANGUAGES} -p subdivx -s "${EPISODE_PATH}" >> $LOG_FILE 2>&1
+subliminal download ${LANGUAGES} -p subdivx -a 23d -s "${EPISODE_PATH}" >> $LOG_FILE 2>&1
 
 # Look for not found subtitles
 declare LANG_ARRAY=($(echo ${LANGUAGES} | sed "s/-l //g"))
@@ -80,7 +80,7 @@ for LANG in "${LANG_ARRAY[@]}"; do
   SUB_FILE=$(echo $EPISODE_PATH | sed "s/...$/srt/g")
   if [[ ! -f $SUB_FILE ]]; then
     doLog "Subtitle ${SUB_FILE} not found, adding it to wanted"
-    echo $EPISODE_PATH:$SUB_FILE >> ${WANTED_FILE}
+    echo $EPISODE_PATH:$SUB_FILE:0 >> ${WANTED_FILE}
   else
     doLog "Subtitle ${SUB_FILE} found!!!"
     doLog "hardlink_to_plex_or_nas.sh for ${EPISODE_PATH} from sub-downloader"
