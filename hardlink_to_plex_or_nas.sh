@@ -46,13 +46,14 @@ doMLog "series_dir: ${series_dir}"
 media_dir_name="$(basename "$media_dir")"
 media_dir_name_no_bs="$(basename "$media_dir" | sed -e 's/\\//g' )"
 parentdir="$(dirname "$media_dir")"
+parentdir_name="$(basename "$parentdir")"
 
 doMLog "media_dir: ${media_dir}"
 doMLog "media_dir_name_no_bs: ${media_dir_name_no_bs}"
 doMLog "media_dir_name: ${media_dir_name}"
 doMLog "parentdir: ${parentdir}"
 
-if [ "$media_dir_name" == "movies" ]; then
+if [ "$parentdir_name" == "movies" ]; then
   # it's a movie
 
   #create movie folder
